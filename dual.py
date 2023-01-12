@@ -21,52 +21,52 @@ class Dual:
     real : float       # real part
     dual : float = 0   # infitesimal part
 
-    def __pos__(x):
-        return x
+    def __pos__(self):
+        return self
 
-    def __neg__(x):
-        return Dual(-x.real, -x.dual)
+    def __neg__(self):
+        return Dual(-self.real, -self.dual)
 
-    def conj(x):
-        return Dual(x.real, -x.dual)
+    def conj(self):
+        return Dual(self.real, -self.dual)
 
-    def __abs__(x):
-        return Dual(abs(x.real), abs(x.dual))
+    def __abs__(self):
+        return Dual(abs(self.real), abs(self.dual))
 
-    def __add__(x, y):
+    def __add__(self, y):
         try:
-            return Dual(x.real + y.real, x.dual + y.dual)
+            return Dual(self.real + y.real, self.dual + y.dual)
         except AttributeError:
-            return Dual(x.real + y, x.dual)
+            return Dual(self.real + y, self.dual)
 
-    def __radd__(x, y):
-            return Dual(x.real + y, x.dual)
+    def __radd__(self, y):
+            return Dual(self.real + y, self.dual)
 
-    def __sub__(x, y):
+    def __sub__(self, y):
         try:
-            return Dual(x.real - y.real, x.dual - y.dual)
+            return Dual(self.real - y.real, self.dual - y.dual)
         except AttributeError:
-            return Dual(x.real - y, x.dual)
+            return Dual(self.real - y, self.dual)
 
-    def __rsub__(x, y):
-        return Dual(y - x.real, -x.dual)
+    def __rsub__(self, y):
+        return Dual(y - self.real, -self.dual)
 
-    def __mul__(x, y):
+    def __mul__(self, y):
         try:
-            return Dual(x.real * y.real, (x.real * y.dual) + (x.dual * y.real))
+            return Dual(self.real * y.real, (self.real * y.dual) + (self.dual * y.real))
         except AttributeError:
-            return Dual(x.real * y, x.dual * y)
+            return Dual(self.real * y, self.dual * y)
 
-    def __rmul__(x, y):
-        return Dual(x.real * y, x.dual*y)
+    def __rmul__(self, y):
+        return Dual(self.real * y, self.dual*y)
 
-    def __eq__(x, y):
+    def __eq__(self, y):
         try:
-            return x.real == y.real and x.dual == y.dual
+            return self.real == y.real and self.dual == y.dual
         except AttributeError:
-            return x.real == y
+            return self.real == y
 
-    def __pow__(x, y):
+    def __pow__(self, y):
         """ x**y """
 
         # this is tricky
@@ -83,47 +83,46 @@ class Dual:
         if not isinstance(y, Dual):
             y = Dual(y, 0)
 
-        if x.real == 0 and y.real >= 1:
+        if self.real == 0 and y.real >= 1:
             if y.real > 1:
                 return Dual(0,0);
             else:
-                return x;
+                return self;
 
-        if x.real < 0 and y == math.floor(y.real):
-            tmp = y.real * math.pow(x.real, y.real - 1)
-            return Dual(math.pow(x.real, y.real), tmp * x.dual)
+        if self.real < 0 and y == math.floor(y.real):
+            tmp = y.real * math.pow(self.real, y.real - 1)
+            return Dual(math.pow(self.real, y.real), tmp * self.dual)
         else:
-            tmp1 = math.pow(x.real, y.real)
-            tmp2 = y.real * math.pow(x.real, y.real - 1)
-            tmp3 = tmp1 * math.log(x.real)
-            return Dual(tmp1, tmp2 * x.dual + tmp3 * y.dual)
+            tmp1 = math.pow(self.real, y.real)
+            tmp2 = y.real * math.pow(self.real, y.real - 1)
+            tmp3 = tmp1 * math.log(self.real)
+            return Dual(tmp1, tmp2 * self.dual + tmp3 * y.dual)
 
-
-    def __rpow__(x, y):
+    def __rpow__(self, y):
         # y**x, if expression is 3 ** Dual(4),then x = Dual(4), y = 3
-        real = y ** x.real
-        return Dual(real, real*(x.dual * math.log(y.real)))
+        real = y ** self.real
+        return Dual(real, real*(self.dual * math.log(y.real)))
 
-    def __truediv__(x, y):
+    def __truediv__(self, y):
         y_real_inv = 1. / y.real
         try:
-            real_div = x.real * y_real_inv
-            return Dual(real_div, (x.dual - real_div*y.dual) * y_real_inv)
+            real_div = self.real * y_real_inv
+            return Dual(real_div, (self.dual - real_div*y.dual) * y_real_inv)
         except AttributeError:
-            return Dual(x.real * y_real_inv, x.dual * y_real_inv)
+            return Dual(self.real * y_real_inv, self.dual * y_real_inv)
         
-    def __rtruediv__(x, y):
+    def __rtruediv__(self, y):
         y = Dual(y, 0)
-        return y / x
+        return y / self
 
     def __hash__(self):
         return hash(self.real + self.dual*1j) # use builtin hash for complex
 
-    def __str__(self):
+    def __repr__(self):
         if self.dual >= 0:
-            return f'{self.real}+{self.dual}ε'
+            return f'{self.real} + {self.dual}ε'
         else:
-            return f'{self.real}{self.dual}ε'
+            return f'{self.real} - {-self.dual}ε'
 
 def as_dual(x):
     if isinstance(x, Dual):
@@ -197,6 +196,7 @@ def sinh(x):
         return Dual(math.sinh(a), math.cosh(a)*x.dual)
     else:
         return math.sinh(x)
+
 
 def cosh(x):
        """Return the hyperbolic cosine of x (measured in radians)."""
@@ -334,16 +334,3 @@ def near_eq(x:Dual, y:Dual, eps: float = 1e-12):
     diff = x - y
     return abs(diff.real) <= eps and abs(diff.dual) <= eps
 
-
-
-if __name__ == "__main__":
-    3 ** Dual(4)
-    print(Dual(3,4) - 3)
-    print(Dual(3,4) * Dual(1,2))
-    print(Dual(3,4) * 2)
-    print(Dual(3,4) / Dual(1,2))
-    print(Dual(3,4) / Dual(1,0))
-
-    x = Dual(4,2)
-    print(sqrt(x))
-    hash(3+4j)
