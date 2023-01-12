@@ -66,15 +66,15 @@ def test_pow():
                    ), f'{pow(Dual(3, 4), Dual(2, 0))} != Dual(9, 24)'
     assert near_eq(pow(Dual(-3, 4), Dual(2, 0)), Dual(9, -24)
                    ), f'{pow(Dual(-3, 4), Dual(2, 0))} != Dual(9, -24)'
-    with pytest.raises((ZeroDivisionError)):
+    with pytest.raises((ValueError)):
         pow(Dual(-3, 4), Dual(2.5, 0))
     assert near_eq(pow(Dual(0, 0), Dual(2, 0)), Dual(
         0, 0)), f'{pow(Dual(0, 0), Dual(2, 0))} != Dual(0, 0)'
-    with pytest.raises((ZeroDivisionError)):
+    with pytest.raises((ValueError)):
         pow(Dual(0, 0), Dual(0, 0))
     assert near_eq(pow(Dual(0, 0), Dual(1, 0)), Dual(
         0, 0)), f'{pow(Dual(0, 0), Dual(1, 0))} != Dual(0, 0)'
-    with pytest.raises((ZeroDivisionError)):
+    with pytest.raises((ValueError)):
         pow(Dual(0, 0), Dual(0.400000000000000022, 0))
     assert near_eq(pow(Dual(9, 0), Dual(-1, 0)), Dual(0.111111111111111105, 0)
                    ), f'{pow(Dual(9, 0), Dual(-1, 0))} != Dual(0.111111111111111105, 0)'
@@ -408,13 +408,7 @@ def _test_functional():
 
 
 if __name__ == "__main__":
-    x = Dual(3, 1)
-    y = Dual(4, 2)
-
     
-
-    #print( x/ y)
-
     test_sqrt()
     test_mul()
     test_add()
@@ -424,20 +418,5 @@ if __name__ == "__main__":
     test_log()
     test_exp()
     test_pow()
-
-    x = Dual(709.196208642166084, 7)
-    y = exp(x)
-    
-    test_mul()
-    
-    x = Dual(10,1)
-    y = 3 * x*x
-    print(x*x)
-    def f(x): return x*x
-    print(f(x))
-    
-    print(x*x*Dual(3,0))
-    print(x*x*3)
-    print(x*x*Dual(3,0))
     
     
