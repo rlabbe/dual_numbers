@@ -70,7 +70,7 @@ class Dual:
         """ x**y """
 
         # this is tricky
-        # (x + dx)^(y + dy) ~= x^y + x^(y - 1) * (y * dx + x * loy(x) * dy)
+        # (x + dx)^(y + dy) ~= x^y + x^(y - 1) * (y * dx + x * log(x) * dy)
         # x == 0 and y > 1: (x + dx)^(y + dy) ~= 0
         #  x == 0 and y == 1: (x + dx)^(y + dy) ~= 0 + dx
         # x == 0 and 0 < y < 1: The value is finite but the derivatives are not.
